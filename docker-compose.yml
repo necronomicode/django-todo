@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: app/Dockerfile
+    container_name: api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - db
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost
+      - DJANGO_DB_NAME=django-todo
+      - DJANGO_DB_USER=root
+      - DJANGO_DB_PASSWORD=root
+      - DJANGO_DB_HOST=db
+      - DJANGO_DB_PORT=5432
+
+  db:
+    image: postgres:15.0-alpine
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_DB: django-todo
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data: null
